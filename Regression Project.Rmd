@@ -1,0 +1,249 @@
+---
+title: "Regression Project"
+output:
+  html_document: default
+  pdf_document: default
+date: "2023-09-10"
+---
+
+# 1. Import Package(s) and Dataset
+
+### Dataset Google Sheets Link: https://docs.google.com/spreadsheets/d/1gpq2NdKtCitcjUuaP7FPSYnUu3GnOfxy6njsmNUOCMY/edit#gid=0
+
+```{r import packages}
+library(tidyverse)
+library(corrplot)
+library(jtools)
+library(Metrics)
+library(caret)
+library(glmnet)
+library(leaps)
+library(mgcv)
+```
+
+
+```{r import dataset}
+df <- read.csv("regression_df.csv")
+
+df
+```
+
+# 2. Data Preprocessing and EDA 
+
+```{r data preprocessing (remove numbers from team names)}
+# remove numbers preceding Team Names
+df$Team <- gsub('[0-9.]', '', df$Team)
+
+df
+```
+
+```{r check data shape}
+dim(df)
+```
+```{r check summary of the data including for missing variables}
+summary(df)
+```
+```{r divide Goals.Conceded column (goals conceded) by 19 (average number of games played per team during data collection)}
+
+df <- df %>% mutate(Goals.Conceded = Goals.Conceded/19)
+
+df
+```
+
+```{r check for column names and rename columns in a readable manner}
+
+colnames(df) <- c('Team','Shots_pg','Shots_OT_pg','Dribbles_pg','Fouled_pg','Goals_Conceded_pg')
+
+print(colnames(df))
+
+df
+```
+
+```{r correlation pairplot}
+pairs(df %>% select(-1))
+```
+
+```{r histogram using map function}
+df %>% 
+  select(-1) %>% 
+  Map(function(x,y){hist(x, breaks = 10, main = y, xlab = y)},.,names(.))
+```
+```{r histogram using ggplot}
+df %>% 
+  select(-1) %>% 
+  gather(variable, value) %>% 
+  ggplot(
+    aes(value)) + 
+    geom_histogram(bins = 51) + 
+    facet_wrap(~variable, scales = 'free_x'
+                )
+```
+
+
+
+
+```{r corrleation matrix and check for multicollinearity}
+df %>% 
+  select(-1) %>% 
+  cor()
+```
+
+```{r correlation matrix heatmap}
+df %>% 
+   select(-1) %>% 
+   cor() %>% 
+   corrplot(type = "lower",
+             tl.col = "black", tl.srt = 45)
+
+```
+
+```{r check for normality of residuals, decide to log the data or not}
+linear_regression_model <- lm(log(Goals_Conceded_pg) ~ ., data = df[-c(1)])
+
+plot(linear_regression_model)
+```
+
+```{r split data into train/test datasets}
+set.seed(555)
+
+df <- df %>% select(-1)
+      
+sample <- sample(c(TRUE, FALSE), nrow(df), replace=TRUE, prob=c(0.8,0.2))
+
+train  <- df[sample, ]
+test   <- df[!sample, ]
+```
+
+# 3. Modeling
+
+## 3.1 Linear Regression
+
+```{r build linear regression model and check p-values of variables with entire dataset}
+summary(linear_regression_model)
+```
+
+```{r visualize coefficients for linear regression model}
+plot_coefs(linear_regression_model) + 
+  geom_label(aes(label = estimate)) +
+  theme(legend.position = "none") 
+```
+
+```{r fit data into linear regression model, and calculate rmse using train/test data}
+
+linear_regression_revised = lm(log(Goals_Conceded_pg) ~ Shots_pg + Fouled_pg, data = train)
+
+predicted_values <- predict(linear_regression_revised, newdata = test[-c(2,3,5)])
+
+cat("RMSE for Linear Regression Model:", rmse(test$Goals_Conceded_pg, predicted_values), "\n")
+
+cat("R Squared for Linear Regression Model:", R2(predicted_values, test$Goals_Conceded_pg))
+```
+## 3.2 Ridge Regression
+
+```{r build ridge regression model and look at summary}
+y <- df$Goals_Conceded_pg
+
+x <- data.matrix(df[, c('Shots_pg', 'Shots_OT_pg', 'Dribbles_pg', 'Fouled_pg')])
+
+ridge_regression_model <- glmnet(x, y, alpha = 0)
+
+summary(ridge_regression_model)
+```
+
+```{r find the best lambda value for ridge regression}
+cv_model <- cv.glmnet(x, y, alpha = 0)
+
+best_lambda <- cv_model$lambda.min
+
+best_lambda
+
+plot(cv_model)
+```
+
+
+```{r visualize coefficients for ridge regression}
+ridge_regression_model <- glmnet(x, y, alpha = 0, lambda = best_lambda)
+
+coef(ridge_regression_model)
+```
+
+```{r calculate rmse for ridge regression model}
+y <- train$Goals_Conceded_pg
+
+x <- data.matrix(train[, c('Shots_pg', 'Shots_OT_pg', 'Dribbles_pg', 'Fouled_pg')])
+
+ridge_regression_model <- glmnet(x, y, alpha = 0, lambda = best_lambda)
+
+x_new <- data.matrix(test[, c('Shots_pg', 'Shots_OT_pg', 'Dribbles_pg', 'Fouled_pg')])
+
+ridge_predicted_values <- predict(ridge_regression_model, newx = x_new)
+
+cat("RMSE for Ridge Regression Model:", rmse(test$Goals_Conceded_pg, ridge_predicted_values), "\n")
+
+cat("R Squared for Ridge Regression Model:", R2(ridge_predicted_values, test$Goals_Conceded_pg))
+```
+
+## 3.3 Lasso Regression
+
+```{r build lasso regression model and look at summary for lasso regression model}
+cv_model <- cv.glmnet(x, y, alpha = 1)
+
+best_lambda_lasso <- cv_model$lambda.min
+best_lambda_lasso
+
+plot(cv_model) 
+```
+
+```{r visualize coefficients for lasso regression model}
+lasso_regression_model <- glmnet(x, y, alpha = 1, lambda = best_lambda_lasso)
+
+coef(lasso_regression_model)
+```
+
+```{r calculate rmse for lasso regression model}
+y <- train$Goals_Conceded_pg
+
+x <- data.matrix(train[, c('Shots_pg', 'Shots_OT_pg', 'Dribbles_pg', 'Fouled_pg')])
+
+x_new <- data.matrix(test[, c('Shots_pg', 'Shots_OT_pg', 'Dribbles_pg', 'Fouled_pg')])
+
+lasso_predicted_values <- predict(lasso_regression_model, newx = x_new)
+
+cat("RMSE for Lasso Regression Model:", rmse(test$Goals_Conceded_pg, lasso_predicted_values), "\n")
+
+cat("R Squared for Lasso Regression Model:", R2(lasso_predicted_values, test$Goals_Conceded_pg))
+```
+
+## 5 (Extra) Polynomial Regression
+
+```{r searching for polynomial relationship between variables}
+k = colnames(df[-c(5)])
+
+for (i in k){
+   p <- df %>% 
+    ggplot(aes(x=Goals_Conceded_pg, y=df[,i])) +
+    geom_point() + 
+    geom_smooth() +
+    labs(y = i, x = "Goals_Conceded_pg") 
+   
+   print(p)
+}
+```
+```{r building polynomial model}
+poly3 = lm(formula = Goals_Conceded_pg ~ poly(Shots_pg, 3), data = df)
+
+summary(poly3)
+```
+
+
+# Meaningful References
+
+## Plotting Coefficients for Linear Regression
+
+### https://cran.r-project.org/web/packages/jtools/vignettes/summ.html
+
+### https://stackoverflow.com/questions/74858614/lmer-and-plot-coefs-add-values-for-estimates
+
+### https://www.youtube.com/watch?v=BnRIneLsNJY&ab_channel=DragonflyStatistics
+
+### (THEORY) https://www.statology.org/confidence-interval-for-regression-coefficient-in-r/
