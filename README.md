@@ -32,13 +32,13 @@
 
 #### The lasso regression model will also enable us to prevent overfitting of the model, but will achieve this in a slightly different way than ridge regression as lasso regression, unlike ridge regression, in some cases makes some of the coefficients to be exactly zero, instead of near zero. The optimal lambda value in this model is found to be 0.005 (found through cross validation). The RMSE value for Lasso Regression is 0.3056, and the R-squared value is 0.5807.
 
-### Part 3-4. (Extra) Polynomial Regression
+### Part 3-4. (Extra Attempt) Polynomial Regression
 
 #### Polynomial Regression was also attempted. Polynomial relationships between the variables were visualized in an attempt to apply this model. Shots per game seemed to be the best fit for the polynomial regression model. Unfortunately, unlike my initial expectation, the model seems to produce a result that shows only up to the first degree (not the second, third degrees) to be most relevant based on the p-value (which implies variable importance). So, in this case, Linear Regression and variants of Linear Regression methods seem to be the best fit, rather than polynomial regression. 
 
 ## Part 4. Conclusion and References
 
-####
+#### Comparing the above linear models, 
 
 #### References used for this project include the following pages:
 
