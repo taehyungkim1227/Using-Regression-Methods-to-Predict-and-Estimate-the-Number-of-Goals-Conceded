@@ -38,7 +38,7 @@
 
 ## Part 4. Conclusion and References
 
-#### Comparing the above linear models, 
+#### Comparing the above linear models, the ridge regression model had the lowest RMSE which means that this model yielded the lowest amount of error and therefore predicted the dependant variable of goals conceded most accurately. In terms of R-squared, Multiple Linear Regression had the highest value indicating that this model fit the data well and among the three models in this project, had the largest percentage of the variability in the dependent variable explained by the independent variables.
 
 #### References used for this project include the following pages:
 
