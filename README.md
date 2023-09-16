@@ -1,4 +1,4 @@
-# Using Regression Methods to Predict and Estimate the Number of Goals Scored
+# Using Regression Methods to Predict and Estimate the Number of Goals Conceded
 
 ## Part 1. Project Background
 
