@@ -34,10 +34,15 @@
 
 ### Part 3-4. (Extra) Polynomial Regression
 
-#### Polynomial Regression was also attempted. Polynomial relationships between the variables were visualized in an attempt to apply this model. Shots per game seemed to be the best fit for the polynomial regression model. Unfortunately, unlike my initial expectation, the model seems to produce a result that shows only up to the first degree (not the second, third degrees) to be most relevant based on the p-value (which implies variable importance). So, in this case, Linear Regression and variants of Linear Regression methods seem to be the best fit. 
+#### Polynomial Regression was also attempted. Polynomial relationships between the variables were visualized in an attempt to apply this model. Shots per game seemed to be the best fit for the polynomial regression model. Unfortunately, unlike my initial expectation, the model seems to produce a result that shows only up to the first degree (not the second, third degrees) to be most relevant based on the p-value (which implies variable importance). So, in this case, Linear Regression and variants of Linear Regression methods seem to be the best fit, rather than polynomial regression. 
 
 ## Part 4. Conclusion and References
 
 ####
 
 #### References used for this project include the following pages:
+
+####-https://cran.r-project.org/web/packages/jtools/vignettes/summ.html
+####-https://stackoverflow.com/questions/74858614/lmer-and-plot-coefs-add-values-for-estimates
+####-https://www.youtube.com/watch?v=BnRIneLsNJY&ab_channel=DragonflyStatistics
+####-https://www.statology.org/confidence-interval-for-regression-coefficien
