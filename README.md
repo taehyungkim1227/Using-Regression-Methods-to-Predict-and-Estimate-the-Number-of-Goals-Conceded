@@ -1,8 +1,8 @@
-# Using-Regression-Methods-to-Predict-and-Estimate-the-Number-of-Goals-Scored
+# Using Regression Methods to Predict and Estimate the Number of Goals Scored
 
 ## Part 1. Project Background
 
-#### As a huge fan of professional football in Europe, I was always interested in predicting ,estimating, and exploring the relationship between the number of goals per team using other team statistics such as shots made on target, dribbles made, and fouls made. I was curious in discovering if and if different regression methods would tell unique stories and results. I explored this using soccer data from https://www.whoscored.com and applying regression methods to this data. One can find the R code used for this project in the "Regression Project.Rmd" file in this repository. 
+#### As a huge fan of professional football in Europe, I was always interested in predicting ,estimating, and exploring the relationship between the number of goals per team using other team statistics such as shots made on target, dribbles made, and fouls made. I was curious in discovering if and if different regression methods would tell unique stories and results. I explored this using soccer data from https://www.whoscored.com and applying regression methods to this data. One can find the R code used for this project in the "Regression Project.Rmd" file in this repository. The project was done in R. 
 
 ## Part 2. Data Preprocessing and EDA
 
@@ -34,7 +34,7 @@
 
 ### Part 3-4. (Extra) Polynomial Regression
 
-#### Polynomial Regression was also attempted.
+#### Polynomial Regression was also attempted. Polynomial relationships between the variables were visualized in an attempt to apply this model. Shots per game seemed to be the best fit for the polynomial regression model. Unfortunately, unlike my initial expectation, the model seems to produce a result that shows only up to the first degree (not the second, third degrees) to be most relevant based on the p-value (which implies variable importance). So, in this case, Linear Regression and variants of Linear Regression methods seem to be the best fit. 
 
 ## Part 4. Conclusion and References
 
