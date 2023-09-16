@@ -43,6 +43,9 @@
 #### References used for this project include the following pages:
 
 https://cran.r-project.org/web/packages/jtools/vignettes/summ.html
+
 https://stackoverflow.com/questions/74858614/lmer-and-plot-coefs-add-values-for-estimates
+
 https://www.youtube.com/watch?v=BnRIneLsNJY&ab_channel=DragonflyStatistics
+
 https://www.statology.org/confidence-interval-for-regression-coefficien
